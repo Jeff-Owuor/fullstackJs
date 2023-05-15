@@ -68,7 +68,13 @@ let positive = props.good/total*100
 
 const StatisticLine = (props) => (
   <>
-    <p>{props.text}  {props.value}</p>
+  <table>
+  <tbody>
+    <tr>
+      <td>{props.text}  {props.value}</td>
+    </tr>
+    </tbody>
+  </table>
   </>
 )
 
@@ -85,6 +91,17 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+  const [selected, setSelected] = useState(0)
+const [anecdotes,setAnecdotes] = useState([
+  {text:"'If it hurts, do it more often.",votes:0},
+{text:"Adding manpower to a late software project makes it later!",votes:0},
+{text:"The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",votes:0},
+{text:"Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",votes:0},
+{text:"Premature optimization is the root of all evil.",votes:0},
+{text:"Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",votes:0},
+{text:"Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.",votes:0},
+{text:"The only way to go fast, is to go well.",votes:0}
+])
 
   const course = {
     name: 'Half Stack application development',
@@ -104,6 +121,21 @@ const App = () => {
     ]
   }
 
+
+
+  function handleVote(index) {
+    const updatedAnecdotes = anecdotes.map((anecdote, i) => {
+      if (i === index) {
+        return { ...anecdote, votes: anecdote.votes + 1 };
+      }
+      return anecdote;
+    });
+    setAnecdotes(updatedAnecdotes);
+  }
+
+ const handleAnecdote = () =>{
+  setSelected(Math.floor(Math.random()*7))
+ }
   const handleGood = () => {
     setGood(good+1)
   }
@@ -115,7 +147,12 @@ const App = () => {
   const handleNuetral = () => {
     setNeutral(neutral+1)
   }
-
+  const randomIndex = Math.floor(Math.random() * anecdotes.length);
+  const anecdote = anecdotes[randomIndex];
+  let votes = []
+  anecdotes.map(elem=>votes.push(elem.votes))
+  let higheshtVote = votes.sort((a,b)=>a-b).reverse()[0]
+  let mostVotedQuote = anecdotes.filter(elem=>elem.votes === higheshtVote)
   return (
     <div>
       <Header course={course.name} />
@@ -128,6 +165,15 @@ const App = () => {
      || (bad>=1 &&  <Statistics good={good} bad={bad} neutral={neutral}/>)
      || (neutral>=1 &&  <Statistics good={good} bad={bad} neutral={neutral}/>)
      } 
+
+     <p>{anecdote.text}</p>
+      <p>has {anecdote.votes} votes</p>
+      <button onClick={() => handleVote(anecdotes.indexOf(anecdote))}>Vote</button>
+     <button onClick={handleAnecdote}>Next Anecdote</button>
+
+     <h2>Anecdote with the most votes</h2>
+     <p>{mostVotedQuote[0].text}</p>
+     <p>has {mostVotedQuote[0].votes} votes</p>
     </div>
   )
 }
